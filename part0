@@ -1,0 +1,82 @@
+0.4: New note diagram
+
+sequenceDiagram
+    participant browser
+    participant server
+    participant user
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server
+    server-->>browser: Response: Status 302 (Found)
+    deactivate server
+
+    browser->>browser: Redirect to https://studies.cs.helsinki.fi/exampleapp/notes
+    user->>browser: Enter note content and click Save button
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: Response: Status 201 (Created)
+    deactivate server
+
+    browser->>browser: Display confirmation message
+
+    Note right of server: The server handles the request to create a new note, including saving it to the database.
+
+    Note right of browser: The browser sends a POST request to create a new note and receives a success response, then displays a confirmation message to the user.
+
+
+    0.5: Single page app diagram
+    
+    sequenceDiagram
+    participant User
+    participant Browser
+    participant Server
+
+    User->>Browser: Enter URL https://studies.cs.helsinki.fi/exampleapp/spa
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    activate Server
+    Server-->>Browser: HTML document
+    deactivate Server
+
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate Server
+    Server-->>Browser: the css file
+    deactivate Server
+
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+    activate Server
+    Server-->>Browser: the JavaScript file (spa.js)
+    deactivate Server
+
+    Browser->>Browser: The browser starts executing spa.js
+
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate Server
+    Server-->>Browser: [{ "content": "SPA is awesome", "date": "2023-10-03" }, ... ]
+    deactivate Server
+
+    Browser->>Browser: The browser renders the notes using the data from data.json
+
+
+0.6: New note in Single page app diagram
+
+    sequenceDiagram
+    participant User
+    participant Browser
+    participant Server
+    participant Database
+
+    User->>Browser: Enter a new note and click 'Save'
+    Browser->>Browser: Validate user input
+    Browser->>Server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate Server
+    Server->>Database: Save the new note to the database
+    activate Database
+    Database-->>Server: Confirmation: Note saved
+    deactivate Database
+    Server-->>Browser: Response: Status 201 (Created)
+    deactivate Server
+    Browser->>Browser: Display confirmation message
+    Browser->>Browser: Update the displayed notes with the new one
+
+
+
