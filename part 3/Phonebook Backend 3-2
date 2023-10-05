@@ -1,0 +1,40 @@
+const express = require('express');
+const app = express();
+const morgan = require('morgan');
+
+// Use middleware to log requests
+app.use(morgan('tiny'));
+
+// Sample phonebook data (replace with your actual data)
+const phonebook = [
+  {
+    id: 1,
+    name: 'John Doe',
+    phoneNumber: '123-456-7890',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    phoneNumber: '987-654-3210',
+  },
+];
+
+app.get('/info', (req, res) => {
+  // Calculate the current time
+  const currentTime = new Date();
+
+  // Create a response message with the time and the number of entries
+  const message = `
+    <p>Phonebook has info for ${phonebook.length} people</p>
+    <p>${currentTime}</p>
+  `;
+
+  // Set the content type to HTML and send the message as a response
+  res.setHeader('Content-Type', 'text/html');
+  res.send(message);
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
