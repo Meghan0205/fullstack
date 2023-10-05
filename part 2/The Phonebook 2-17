@@ -1,0 +1,76 @@
+// server.js (or your backend file)
+
+// PUT endpoint to update a contact's phone number
+app.put('/api/persons/:id', (req, res) => {
+  const contactId = req.params.id;
+  const newPhoneNumber = req.body.phoneNumber;
+
+  // Implement code to update the phone number of the contact with the given ID
+  // Check if the contact exists; if not, return a 404 error
+  const contactToUpdate = findContactById(contactId);
+  if (!contactToUpdate) {
+    return res.status(404).json({ error: 'Contact not found' });
+  }
+
+  // Update the contact's phone number
+  contactToUpdate.phoneNumber = newPhoneNumber;
+
+  // Respond with success status code
+  return res.status(200).json(contactToUpdate);
+});
+
+// ... Other routes ...
+
+// Helper function to find a contact by ID
+function findContactById(id) {
+  // Implement logic to find a contact by ID from your data store (e.g., a database)
+  // Return the contact object if found, or null if not found
+}
+
+
+// phonebook.js
+
+// Function to show a notification message on the screen
+function showMessage(message, isSuccess) {
+  const messageElement = document.getElementById('message');
+  messageElement.textContent = message;
+  messageElement.classList.toggle('success', isSuccess);
+  messageElement.classList.toggle('error', !isSuccess);
+}
+
+// Example usage when a successful operation is executed (e.g., contact added or updated)
+try {
+  // Add or update contact logic here
+  // ...
+
+  // Show a success message on the screen
+  showMessage('Operation succeeded', true);
+} catch (error) {
+  // Handle errors
+
+  // Show an error message on the screen
+  showMessage('Operation failed', false);
+}
+
+
+<!-- Add this within your HTML file where messages should appear -->
+<div id="message" class="message"></div>
+
+
+/* CSS for success and error messages */
+.message {
+  display: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.message.success {
+  background-color: #4CAF50; /* Green for success */
+  color: white;
+}
+
+.message.error {
+  background-color: #f44336; /* Red for error */
+  color: white;
+}
