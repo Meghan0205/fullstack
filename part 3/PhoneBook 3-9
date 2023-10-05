@@ -1,0 +1,17 @@
+const getAll = () => {
+  return axios.get('/api/persons'); // Assuming your frontend is running on the same domain
+};
+
+
+app.get('/api/persons', (req, res) => {
+  // Handle the GET request to fetch phonebook data
+  // ...
+});
+
+
+app.post('/api/persons', (req, res) => {
+  console.log('Received a POST request with data:', req.body);
+
+  // Handle the POST request to add a new phonebook entry
+  // ...
+});
