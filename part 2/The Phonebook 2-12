@@ -1,0 +1,28 @@
+// Assuming you have a form with input fields for name and phone number
+const form = document.querySelector('#phonebook-form');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.querySelector('#name-input').value;
+  const phoneNumber = document.querySelector('#phone-input').value;
+
+  // Send a POST request to the backend to add the contact
+  try {
+    const response = await fetch('/api/add-contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, phoneNumber }),
+    });
+
+    if (response.ok) {
+      // Contact added successfully, update the UI as needed
+    } else {
+      // Handle error cases here
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
