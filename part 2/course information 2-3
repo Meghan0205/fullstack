@@ -1,0 +1,17 @@
+const Content = ({ parts }) => {
+  const totalExercises = parts.reduce((sum, part) => {
+    console.log('what is happening', sum, part); // Use console.log for debugging
+    return sum + part.exercises;
+  }, 0);
+
+  return (
+    <div>
+      {parts.map((part) => (
+        <Part key={part.id} part={part} />
+      ))}
+      <p>
+        <strong>Total exercises: {totalExercises}</strong>
+      </p>
+    </div>
+  );
+};
