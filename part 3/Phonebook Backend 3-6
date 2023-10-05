@@ -1,0 +1,57 @@
+const express = require('express');
+const app = express();
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+
+// Use middleware to log requests
+app.use(morgan('tiny'));
+app.use(bodyParser.json());
+
+// Sample phonebook data (replace with your actual data)
+let phonebook = [
+  {
+    id: 1,
+    name: 'John Doe',
+    phoneNumber: '123-456-7890',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    phoneNumber: '987-654-3210',
+  },
+];
+
+// Generate a new unique ID
+const generateId = () => {
+  const minId = 1;
+  const maxId = 10000; // Adjust the range as needed
+  return Math.floor(Math.random() * (maxId - minId + 1)) + minId;
+};
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body;
+
+  if (!body.name || !body.phoneNumber) {
+    return res.status(400).json({ error: 'Name and phoneNumber are required' });
+  }
+
+  // Check if the name already exists in the phonebook
+  if (phonebook.some(entry => entry.name === body.name)) {
+    return res.status(400).json({ error: 'Name must be unique' });
+  }
+
+  const newEntry = {
+    id: generateId(),
+    name: body.name,
+    phoneNumber: body.phoneNumber,
+  };
+
+  phonebook = phonebook.concat(newEntry);
+
+  res.json(newEntry);
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
