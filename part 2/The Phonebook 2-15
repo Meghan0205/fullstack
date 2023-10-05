@@ -1,0 +1,60 @@
+// phonebook.js
+
+// Assuming you have a form with input fields for name and phone number
+const form = document.querySelector('#phonebook-form');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.querySelector('#name-input').value;
+  const phoneNumber = document.querySelector('#phone-input').value;
+
+  // Check if a contact with the same name exists
+  const existingContact = findContactByName(name);
+
+  if (existingContact) {
+    // Confirm the update with the user
+    const confirmed = window.confirm(`${name} already exists in the phonebook. Do you want to update the phone number?`);
+
+    if (confirmed) {
+      // If confirmed, update the phone number using the HTTP PUT method
+      try {
+        await updateContact(existingContact.id, phoneNumber);
+        // Handle successful update, e.g., update the UI
+        console.log('Contact updated');
+        refreshContactList();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  } else {
+    // If the contact doesn't exist, add it as a new contact
+    try {
+      // Use the addContact function from the api module (as shown in previous steps)
+      const result = await addContact(name, phoneNumber);
+      // Handle the result, update the UI as needed
+      console.log('Contact added:', result);
+      refreshContactList();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+});
+
+// Helper function to find a contact by name
+function findContactByName(name) {
+  // Implement logic to find a contact by name from your data store (e.g., a database)
+  // Return the contact object if found, or null if not found
+}
+
+// Function to update a contact's phone number using HTTP PUT
+async function updateContact(contactId, newPhoneNumber) {
+  try {
+    // Use the axios library to make an HTTP PUT request to update the phone number
+    await axios.put(`/api/persons/${contactId}`, { phoneNumber: newPhoneNumber });
+  } catch (error) {
+    throw new Error('Failed to update contact');
+  }
+}
+
+// ... Other code ...
