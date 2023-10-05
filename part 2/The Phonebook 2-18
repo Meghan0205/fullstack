@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Info App</title>
+</head>
+<body>
+    <h1>Country Information</h1>
+    <input type="text" id="search-input" placeholder="Enter a country name">
+    <div id="results"></div>
+    <div id="country-details"></div>
+</body>
+<script src="app.js"></script>
+</html>
+
+
+const searchInput = document.getElementById('search-input');
+const resultsContainer = document.getElementById('results');
+const countryDetailsContainer = document.getElementById('country-details');
+
+searchInput.addEventListener('input', debounce(searchCountries, 500));
+
+async function searchCountries() {
+    const query = searchInput.value;
+    if (!query) {
+        clearResults();
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://restcountries.com/v3/name/${query}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        if (data.length > 10) {
+            // Too many matches
+            showTooManyMatchesMessage();
+        } else if (data.length > 1) {
+            // Display a list of matching countries
+            displayCountryList(data);
+        } else if (data.length === 1) {
+            // Display detailed information for a single country
+            displayCountryDetails(data[0]);
+        } else {
+            clearResults();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function displayCountryList(countries) {
+    clearResults();
+    const ul = document.createElement('ul');
+    countries.forEach((country) => {
+        const li = document.createElement('li');
+        li.textContent = country.name.common;
+        li.addEventListener('click', () => {
+            displayCountryDetails(country);
+        });
+        ul.appendChild(li);
+    });
+    resultsContainer.appendChild(ul);
+}
+
+function displayCountryDetails(country) {
+    clearResults();
+    const { name, capital, area, flags, languages } = country;
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <h2>${name.common}</h2>
+        <p><strong>Capital:</strong> ${capital}</p>
+        <p><strong>Area:</strong> ${area} square kilometers</p>
+        <p><strong>Languages:</strong> ${Object.values(languages).join(', ')}</p>
+        <img src="${flags.png}" alt="${name.common} flag" width="200">
+    `;
+    countryDetailsContainer.appendChild(div);
+}
+
+function showTooManyMatchesMessage() {
+    clearResults();
+    const message = document.createElement('p');
+    message.textContent = 'Too many matches. Please make your query more specific.';
+    resultsContainer.appendChild(message);
+}
+
+function clearResults() {
+    resultsContainer.innerHTML = '';
+    countryDetailsContainer.innerHTML = '';
+}
+
+// Debounce function to limit the frequency of API requests
+function debounce(func, delay) {
+    let timeout;
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func.apply(context, args);
+        }, delay);
+    };
+}
+
+
+/* Add your CSS styles here */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#results ul {
+    list-style: none;
+    padding: 0;
+}
+
+#results ul li {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#results ul li:hover {
+    background-color: #f0f0f0;
+}
+
+#country-details {
+    text-align: center;
+}
+
+#country-details img {
+    margin-top: 20px;
+}
+
+
