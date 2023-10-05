@@ -1,0 +1,34 @@
+// Add this code inside the `displayCountryList` function
+
+function displayCountryList(countries) {
+    clearResults();
+    const ul = document.createElement('ul');
+    countries.forEach((country) => {
+        const li = document.createElement('li');
+        const showButton = document.createElement('button');
+        showButton.textContent = 'Show';
+        showButton.addEventListener('click', () => {
+            displayCountryDetails(country);
+        });
+        li.textContent = country.name.common;
+        li.appendChild(showButton);
+        ul.appendChild(li);
+    });
+    resultsContainer.appendChild(ul);
+}
+
+
+/* Add this CSS to style the "Show" buttons */
+#results ul li button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#results ul li button:hover {
+    background-color: #45a049;
+}
