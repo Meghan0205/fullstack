@@ -1,0 +1,80 @@
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) {
+    return null; // Return null if the list of blogs is empty.
+  }
+
+  const authorCount = {};
+  
+  blogs.forEach((blog) => {
+    if (authorCount[blog.author]) {
+      authorCount[blog.author] += 1;
+    } else {
+      authorCount[blog.author] = 1;
+    }
+  });
+
+  const mostBlogsAuthor = Object.entries(authorCount).reduce((prev, current) => {
+    return prev[1] > current[1] ? prev : current;
+  });
+
+  return { author: mostBlogsAuthor[0], blogs: mostBlogsAuthor[1] };
+};
+
+module.exports = {
+  dummy,
+  totalLikes,
+  favoriteBlog,
+  mostBlogs
+};
+
+
+describe('most blogs', () => {
+  test('when list has only one blog, it is the author with the most blogs', () => {
+    const listWithOneBlog = [
+      {
+        author: 'Author A',
+        blogs: 1
+      }
+    ];
+
+    const result = listHelper.mostBlogs(listWithOneBlog);
+    const expected = {
+      author: 'Author A',
+      blogs: 1
+    };
+    expect(result).toEqual(expected);
+  });
+
+  test('when list has multiple blogs, it returns the author with the most blogs', () => {
+    const listWithMultipleBlogs = [
+      {
+        author: 'Author A',
+        blogs: 2
+      },
+      {
+        author: 'Author B',
+        blogs: 3
+      },
+      {
+        author: 'Author C',
+        blogs: 1
+      }
+    ];
+
+    const result = listHelper.mostBlogs(listWithMultipleBlogs);
+    const expected = {
+      author: 'Author B',
+      blogs: 3
+    };
+    expect(result).toEqual(expected);
+  });
+
+  test('when list is empty, it returns null', () => {
+    const emptyList = [];
+
+    const result = listHelper.mostBlogs(emptyList);
+    expect(result).toBeNull();
+  });
+
+  // Add more test cases here to cover various scenarios
+});
