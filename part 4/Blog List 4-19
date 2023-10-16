@@ -1,0 +1,33 @@
+const express = require('express');
+const app = express();
+const authenticateUser = require('./middleware/auth'); // Import your authentication middleware
+const Blog = require('./models/blog'); // Adjust the path to your Blog model
+
+app.use(express.json());
+
+// ...
+
+// Create a new blog with authentication middleware
+app.post('/api/blogs', authenticateUser, async (req, res) => {
+  try {
+    const { title, author, url, likes } = req.body;
+    const { user } = req;
+
+    const blog = new Blog({
+      title,
+      author,
+      url,
+      likes,
+      user: user._id, // Designate the authenticated user as the creator
+    });
+
+    const savedBlog = await blog.save();
+
+    res.status(201).json(savedBlog);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ...
