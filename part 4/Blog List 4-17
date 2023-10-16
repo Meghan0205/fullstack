@@ -1,0 +1,70 @@
+const mongoose = require('mongoose');
+
+const blogSchema = new mongoose.Schema({
+  title: String,
+  author: String,
+  url: String,
+  likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+});
+
+const Blog = mongoose.model('Blog', blogSchema);
+
+module.exports = Blog;
+
+
+app.post('/api/blogs', async (req, res) => {
+  try {
+    const { title, author, url, likes } = req.body;
+
+    // Find the first user in the database (you can customize this logic)
+    const user = await User.findOne({}); 
+
+    const blog = new Blog({
+      title,
+      author,
+      url,
+      likes,
+      user: user._id, // Associate the user with the blog
+    });
+
+    const savedBlog = await blog.save();
+
+    // Add the blog to the user's list of blogs (optional)
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+
+    res.status(201).json(savedBlog);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const blogs = await Blog.find({}).populate('user', 'username name'); // Include specific user fields
+
+    res.json(blogs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find({}).populate('blogs', 'title author url likes');
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
