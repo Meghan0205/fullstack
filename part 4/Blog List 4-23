@@ -1,0 +1,45 @@
+const mongoose = require('mongoose');
+const supertest = require('supertest');
+const app = require('../app');
+const Blog = require('../models/blog');
+const User = require('../models/user');
+const helper = require('./test_helper');
+
+const api = supertest(app);
+describe('Blog creation tests', () => {
+  test('Adding a blog without a token should return 401 Unauthorized', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testblog.com',
+      likes: 5,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401);
+  });
+
+  // Add more test cases here...
+});
+test('A valid blog can be added', async () => {
+  const user = await helper.getUser(); // Use your helper function to create a user
+  const token = helper.getTokenForUser(user);
+
+  const newBlog = {
+    title: 'Test Blog',
+    author: 'Test Author',
+    url: 'http://testblog.com',
+    likes: 5,
+  };
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  // Add more assertions as needed...
+});
