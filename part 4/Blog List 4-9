@@ -1,0 +1,56 @@
+const mongoose = require('mongoose');
+const Blog = require('../models/blog'); // Adjust the path to your Blog model
+const app = require('../app'); // Import your Express app
+const supertest = require('supertest');
+const api = supertest(app);
+
+beforeAll(async () => {
+  // Connect to a test database (you should create a separate test database)
+  // This assumes you have set up a connection to a MongoDB database
+  await mongoose.connect('your-test-database-connection-string', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+});
+
+describe('Blog API Tests', () => {
+  // Define a test blog post
+  const initialBlog = {
+    title: 'Sample Blog Post',
+    author: 'John Doe',
+    url: 'http://example.com',
+    likes: 10,
+  };
+
+  test('Blog posts have an "id" property instead of "_id"', async () => {
+    const response = await api.get('/api/blogs');
+    const blog = response.body[0];
+
+    expect(blog.id).toBeDefined();
+    expect(blog._id).toBeUndefined();
+  });
+});
+
+afterAll(async () => {
+  // Disconnect from the test database
+  await mongoose.connection.close();
+});
+
+
+const blogSchema = new mongoose.Schema({
+  title: String,
+  author: String,
+  url: String,
+  likes: Number,
+});
+
+blogSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id;
+    delete returnedObject._id;
+  },
+});
+
+const Blog = mongoose.model('Blog', blogSchema);
+
+module.exports = Blog;
