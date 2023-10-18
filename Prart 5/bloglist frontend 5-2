@@ -1,0 +1,43 @@
+// When the user logs in, store their information in local storage
+localStorage.setItem('loggedInUser', 'username');
+// Check if the user is already logged in
+const loggedInUser = localStorage.getItem('loggedInUser');
+if (loggedInUser) {
+  // Show the "Logout" button and user information
+  showLoggedInUI(loggedInUser);
+} else {
+  // Show the login form
+  showLoginForm();
+}
+// Function to log out
+function logout() {
+  // Clear user information from local storage
+  localStorage.removeItem('loggedInUser');
+  // Show the login form
+  showLoginForm();
+}
+// Function to show the login form
+function showLoginForm() {
+  // Display the login form and hide the "Logout" button
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('logoutButton').style.display = 'none';
+}
+
+// Function to show the logged-in user's UI
+function showLoggedInUI(username) {
+  // Display user information and the "Logout" button
+  document.getElementById('userGreeting').textContent = `Hello, ${username}!`;
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('logoutButton').style.display = 'block';
+}
+
+
+
+
+<div id="loginForm">
+  <!-- Your login form elements -->
+</div>
+<div id="userGreeting">
+  <!-- Greeting for the logged-in user -->
+</div>
+<button id="logoutButton" onclick="logout()">Logout</button>
